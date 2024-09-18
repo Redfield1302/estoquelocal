@@ -1,0 +1,140 @@
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Corpo da página */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #498fd4;
+    color: #343a40;
+}
+
+/* Container principal */
+.container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Título */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #007bff;
+}
+
+/* Estilos das abas */
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tab-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tab-button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos do conteúdo das abas */
+.tab-content {
+    display: none;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+/* Lista de itens */
+ul {
+    list-style-type: none;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+li:last-child {
+    border-bottom: none;
+}
+
+.quantity {
+    margin-left: 10px;
+}
+
+/* Botões de quantidade e remover */
+.quantity-button, .remove-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.quantity-button:hover {
+    background-color: #218838;
+}
+
+.remove-button {
+    background-color: #dc3545;
+}
+
+.remove-button:hover {
+    background-color: #c82333;
+}
+
+/* Estilo do container de entrada */
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.input-container input,
+.input-container select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 10px;
+    flex: 1;
+}
+
+.input-container button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.input-container button:hover {
+    background-color: #0056b3;
+}
+
+/* Efeitos de transição */
+.tab-content {
+    transition: all 0.5s ease;
+}
+

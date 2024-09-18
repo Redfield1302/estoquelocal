@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estoque da Pizzaria</title>
+    <link rel="stylesheet" href="butons.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Estoque da Pizzaria</h1>
+        <div class="tabs">
+            <button class="tab-button" onclick="showTab('massa')">Massa</button>
+            <button class="tab-button" onclick="showTab('recheios')">Recheios</button>
+            <button class="tab-button" onclick="showTab('insumos')">Insumos</button>
+            <button class="tab-button" onclick="showTab('produtos')">Produtos de Limpeza</button>
+        </div>
+        <div id="massa" class="tab-content">
+            <ul id="massa-list"></ul>
+        </div>
+        <div id="recheios" class="tab-content">
+            <ul id="recheios-list"></ul>
+        </div>
+        <div id="insumos" class="tab-content">
+            <ul id="insumos-list"></ul>
+        </div>
+        <div id="produtos" class="tab-content">
+            <ul id="produtos-list"></ul>
+        </div>
+        <div class="input-container">
+            <input type="text" id="new-item-name" placeholder="Nome do item">
+            <input type="number" id="new-item-quantity" placeholder="Quantidade" min="1">
+            <select id="item-category">
+                <option value="massa">Massa</option>
+                <option value="recheios">Recheios</option>
+                <option value="insumos">Insumos</option>
+                <option value="produtos">Produtos de Limpeza</option>
+            </select>
+            <button id="add-button">Adicionar Item</button>
+        </div>
+    </div>
+    <script>
+        // Dados do estoque com quantidades iniciais
+        const estoque = {
+            massa: [
+                { nome: 'Farinha de Trigo', quantidade: 10 },
+                { nome: 'Açúcar', quantidade: 5 },
+                { nome: 'Sal', quantidade: 8 },
+                { nome: 'Ovos', quantidade: 12 },
+                { nome: 'Fermento', quantidade: 3 }
+            ],
+            recheios: [
+                { nome: 'Calabresa', quantidade: 7 },
+                { nome: 'Carne Seca', quantidade: 6 },
+                { nome: 'Milho Verde', quantidade: 9 },
+                { nome: 'Tomate', quantidade: 11 },
+                { nome: 'Pimentão', quantidade: 4 },
+                { nome: 'Presunto', quantidade: 8 },
+                { nome: 'Bacon', quantidade: 5 },
+                { nome: 'Mussarela', quantidade: 10 },
+                { nome: 'Filé de Peito', quantidade: 7 },
+                { nome: 'Requeijão Cremoso', quantidade: 6 },
+                { nome: 'Gorgonzola', quantidade: 4 },
+                { nome: 'Cream Cheese', quantidade: 3 },
+                { nome: 'Banana da Terra', quantidade: 8 },
+                { nome: 'Ovo', quantidade: 12 },
+                { nome: 'Cebola', quantidade: 9 }
+            ],
+            insumos: [
+                { nome: 'Embalagem Pizza N° 30', quantidade: 20 },
+                { nome: 'Embalagem Pizza N° 35', quantidade: 15 },
+                { nome: 'Embalagem Pizza N° 40', quantidade: 10 }
+            ],
+            produtos: [
+                { nome: 'Sabão em Pedra', quantidade: 7 },
+                { nome: 'Detergente', quantidade: 6 },
+                { nome: 'Bucha de Pratos', quantidade: 10 },
+                { nome: 'Bombril', quantidade: 5 },
+                { nome: 'Água Sanitária', quantidade: 4 }
+            ]
+        };
+
+        // Função para mostrar a aba selecionada
+        function showTab(category) {
+            // Esconde todas as abas
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            // Mostra a aba selecionada
+            document.getElementById(category).style.display = 'block';
+            // Exibe os itens da categoria na aba selecionada
+            displayEstoque(category);
+        }
+
+        // Função para atualizar a exibição do estoque em uma aba
+        function displayEstoque(category) {
+            const list = document.getElementById(`${category}-list`);
+            list.innerHTML = ''; // Limpa a lista existente
+            estoque[category].forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    ${item.nome} 
+                    <span class="quantity">Quantidade: ${item.quantidade}</span>
+                    <button class="quantity-button" onclick="updateQuantity('${category}', '${item.nome}', -1)">-</button>
+                    <button class="quantity-button" onclick="updateQuantity('${category}', '${item.nome}', 1)">+</button>
+                    <button class="remove-button" onclick="removeItem('${category}', '${item.nome}')">Remover</button>
+                `;
+                list.appendChild(listItem);
+            });
+        }
+
+        // Função para adicionar um novo item ao estoque
+        function addItem() {
+            const newItemName = document.getElementById('new-item-name').value.trim();
+            const newItemQuantity = parseInt(document.getElementById('new-item-quantity').value.trim(), 10);
+            const category = document.getElementById('item-category').value;
+            if (newItemName && newItemQuantity > 0) {
+                const existingItem = estoque[category].find(item => item.nome === newItemName);
+                if (existingItem) {
+                    existingItem.quantidade += newItemQuantity;
+                } else {
+                    estoque[category].push({ nome: newItemName, quantidade: newItemQuantity });
+                }
+                displayEstoque(category);
+                document.getElementById('new-item-name').value = ''; // Limpa o campo de entrada
+                document.getElementById('new-item-quantity').value = ''; // Limpa o campo de quantidade
+            } else {
+                alert('O nome do item está vazio ou a quantidade é inválida.');
+            }
+        }
+
+        // Função para atualizar a quantidade de um item
+        function updateQuantity(category, nome, delta) {
+            const item = estoque[category].find(item => item.nome === nome);
+            if (item) {
+                item.quantidade += delta;
+                if (item.quantidade < 0) item.quantidade = 0; // Previne quantidades negativas
+                displayEstoque(category);
+            }
+        }
+
+        // Função para remover um item do estoque
+        function removeItem(category, nome) {
+            const index = estoque[category].findIndex(item => item.nome === nome);
+            if (index > -1) {
+                estoque[category].splice(index, 1);
+                displayEstoque(category);
+            }
+        }
+
+        // Adiciona evento de clique ao botão de adicionar
+        document.getElementById('add-button').addEventListener('click', addItem);
+
+        // Inicializa a página mostrando a aba "massa"
+        showTab('massa');
+    </script>
+</body>
+</html>
+
+
