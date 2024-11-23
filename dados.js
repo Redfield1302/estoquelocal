@@ -1,72 +1,55 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const quantidadeInput = document.getElementById("quantidade-item");
-    const adicionarBtn = document.getElementById("adicionar-btn");
-    const novoItemInput = document.getElementById("novo-item");
-    const lista = document.getElementById("lista");
-    
-    // Função para carregar itens
-    function carregarItens() {
-        const itens = JSON.parse(localStorage.getItem("estoque")) || [];
-        itens.forEach(item => adicionarItemNaLista(item.nome, item.quantidade));
-    }
+    const quantidadeInput = document.getElementById("new-item-quantity");
+    const categoriaSelect = document.getElementById("item-category");
+    const videoContainer = document.getElementById("video-container");
+    const leitorBtn = document.getElementById("leitor-btn");
 
-    // Função para salvar o estoque no local storage
-    function salvarItens() {
-        const itens = [];
-        lista.querySelectorAll("li").forEach(item => {
-            const nome = item.querySelector(".nome").textContent;
-            const quantidade = parseInt(item.querySelector(".quantidade").textContent, 10);
-            itens.push({ nome, quantidade });
-        });
-        localStorage.setItem("estoque", JSON.stringify(itens));
-    }
-
-    // Função para adicionar um item na lista
-    function adicionarItemNaLista(nome, quantidade) {
-        const novoItem = document.createElement("li");
-        novoItem.innerHTML = `
-            <span class="nome">${nome}</span> -
-            <span class="quantidade">${quantidade}</span>
-            <button class="editar">Editar</button>
-            <button class="remover">Remover</button>
-        `;
-
-        // Botão de remover
-        novoItem.querySelector(".remover").addEventListener("click", function() {
-            novoItem.remove();
-            salvarItens();
+    // Configurar e iniciar o Quagga.js
+    function iniciarLeitor() {
+        Quagga.init({
+            inputStream: {
+                name: "Live",
+                type: "LiveStream",
+                target: videoContainer, // Onde o vídeo será exibido
+            },
+            decoder: {
+                readers: ["ean_reader"], // Tipos de códigos de barras que serão lidos
+            },
+        }, function(err) {
+            if (err) {
+                console.error(err);
+                alert("Erro ao iniciar o leitor.");
+                return;
+            }
+            Quagga.start();
         });
 
-        // Botão de editar
-        novoItem.querySelector(".editar").addEventListener("click", function() {
-            const novaQuantidade = prompt("Edite a quantidade do item", quantidade);
-            if (novaQuantidade && !isNaN(novaQuantidade)) {
-                novoItem.querySelector(".quantidade").textContent = novaQuantidade;
-                salvarItens();
+        // Listener para quando um código de barras for detectado
+        Quagga.onDetected(function(result) {
+            const codigo = result.codeResult.code;
+            if (codigo) {
+                Quagga.stop(); // Para o leitor após detectar o código
+                buscarItemPorCodigo(codigo); // Buscar o item pelo código
             }
         });
-
-        lista.appendChild(novoItem);
     }
 
-    // Ao clicar no botão adicionar
-    adicionarBtn.addEventListener("click", function() {
-        const nome = novoItemInput.value.trim();
-        const quantidade = parseInt(quantidadeInput.value, 10);
+    // Função para buscar o item pelo código de barras (substitua com sua lógica real)
+    function buscarItemPorCodigo(codigo) {
+        // Aqui você pode usar o código para buscar o item de um banco de dados ou de uma lista local.
+        const itemEncontrado = {
+            nome: `Produto ${codigo}`, // Nome fictício para exemplo
+            quantidade: 1, // Quantidade inicial
+        };
 
-        if (nome === "" || isNaN(quantidade) || quantidade <= 0) {
-            alert("Por favor, preencha todos os campos corretamente.");
-            return;
-        }
+        // Atualiza os campos de entrada com os dados do item
+        document.getElementById("new-item-name").value = itemEncontrado.nome;
+        quantidadeInput.value = itemEncontrado.quantidade;
+    }
 
-        adicionarItemNaLista(nome, quantidade);
-        salvarItens();
-
-        // Limpa os campos de entrada
-        novoItemInput.value = "";
-        quantidadeInput.value = "";
+    // Inicializa o leitor ao clicar no botão
+    leitorBtn.addEventListener("click", function() {
+        videoContainer.style.display = "block"; // Mostra o contêiner do vídeo
+        iniciarLeitor();
     });
-
-    // Chama a função para carregar itens ao carregar a página
-    carregarItens();
 });
